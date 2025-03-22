@@ -1,17 +1,16 @@
-load("@rules_qt//:qt.bzl", "qt_cc_binary", "qt_cc_library")
+load("@rules_qt//:qt.bzl", "qt_cc_binary", "qt_cc_library", "qt_resource", "qt_resource_via_qrc", "qt_ui_library")
 
 qt_cc_library(
     name = "main_window",
     srcs = [ "dummy.cpp" ],
     hdrs = [
-        "mainwindow.h",    # Ensure these files exist
-        "MyWindow.h",       # and contain Q_OBJECT macros
+        "MyWindow.h",
         "QuestionManager.h",
         "QuestionView.h",
         "Ticket.h",
         "GoodDelegate.h",
     ],
-defines = ["QT_NO_KEYWORDS"],  # Disable Qt keyword macros
+defines = ["QT_NO_KEYWORDS"],
 
     deps = [
         "@rules_qt//:qt_widgets",
@@ -22,8 +21,8 @@ defines = ["QT_NO_KEYWORDS"],  # Disable Qt keyword macros
 
 qt_cc_binary(
     name = "mainwindow",
-    srcs = ["main.cpp"],  # Only contains `main()`, includes headers
-        defines = ["QT_NO_KEYWORDS"],  # Also add here if needed
+    srcs = ["main.cpp"],
+        defines = ["QT_NO_KEYWORDS"],
 
     deps = [
         ":main_window",

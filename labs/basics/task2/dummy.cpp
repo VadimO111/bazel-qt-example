@@ -1,5 +1,5 @@
-#include "MyWindow.h"    # Ensure these files exist
-#include "Dialog.h"      # and contain Q_OBJECT macros
+#include "MyWindow.h"
+#include "Dialog.h"
 #include "DrawingTable.h"
 #include "PictureView.h"
 #include "GoodDelegate.h"

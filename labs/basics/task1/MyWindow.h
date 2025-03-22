@@ -75,7 +75,7 @@ public:
         update(1);
     }
 
-private Q_Q_SLOTS:
+private Q_SLOTS:
     void update(int ticketCount) {
         manager->resize(ticketCount);
         totalValue = 0;

@@ -19,7 +19,6 @@ public:
             pos.push_back(i);
         }
     }
-
     void resize(const int n) {
         sz = n;
         curSize = n;

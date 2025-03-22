@@ -64,22 +64,21 @@ QuestionView(QWidget* parent = nullptr) : QWidget(parent) {
     void setName(const QString& name) {
         nameLabel->setText(name);
     }
-
-Q_Q_SIGNALS:
+Q_SIGNALS:
     void nameUpdated(const QString& name);
     void statusUpdated(const QColor& color);
 
-private Q_Q_SLOTS:
+private Q_SLOTS:
     void updateName() {
         QString name = nameEdit->text();
         if(!name.isEmpty()) {
             setName(name);
-            Q_Q_EMIT nameUpdated(nameEdit->text());
+            Q_EMIT nameUpdated(nameEdit->text());
         }
     }
 
     void updateStatus(int index) {
-        Q_Q_EMIT statusUpdated(priority[index]);
+        Q_EMIT statusUpdated(priority[index]);
     }
 
 private:

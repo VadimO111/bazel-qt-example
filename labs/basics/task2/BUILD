@@ -5,13 +5,13 @@ qt_cc_library(
     name = "main_window",
     srcs = [ "dummy.cpp" ],
     hdrs = [
-        "Dialog.h",       # and contain Q_OBJECT macros
+        "Dialog.h",
         "DrawingTable.h",
         "PictureView.h",
         "GoodDelegate.h",
         "MyWindow.h",
     ],
-defines = ["QT_NO_KEYWORDS"],  # Disable Qt keyword macros
+defines = ["QT_NO_KEYWORDS"],
 
     deps = [
         "@rules_qt//:qt_widgets",
@@ -28,8 +28,8 @@ qt_resource_via_qrc(
 )
 qt_cc_binary(
     name = "mainwindow",
-    srcs = ["main.cpp"],  # Only contains `main()`, includes headers
-        defines = ["QT_NO_KEYWORDS"],  # Also add here if needed
+    srcs = ["main.cpp"],
+        defines = ["QT_NO_KEYWORDS"],
 
     deps = [
         ":main_window",
