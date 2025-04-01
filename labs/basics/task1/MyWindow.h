@@ -8,6 +8,8 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QProgressBar>
+#include <future>
+#include <QCloseEvent>
 
 class MyWindow : public QWidget {
     Q_OBJECT
@@ -78,8 +80,9 @@ public:
 private Q_SLOTS:
     void update(int ticketCount) {
         manager->resize(ticketCount);
-        totalValue = 0;
-        greenValue = 0;
+        *tv = totalValue = 0;
+        *gv = greenValue = 0;
+        //qDebug() << totalValue << " " << greenValue;
         totalProgress->setMaximum(2*ticketCount);
         totalProgress->setValue(totalValue);
         totalProgress->setTextVisible(true);
@@ -110,11 +113,15 @@ private Q_SLOTS:
             return;
         }
         if(ticket->getColor() == grey || ticket->getColor() == yellow) {
-            ticket->setColor(green, manager, totalValue, greenValue);
+            ticket->setColor(green, manager, *tv, *gv);
+            totalValue = *tv;
+            greenValue = *gv;
             totalProgress->setValue(totalValue);
             greenProgress->setValue(greenValue);
         } else {
-            ticket->setColor(yellow, manager, totalValue, greenValue);
+            ticket->setColor(yellow, manager, *tv, *gv);
+            totalValue = *tv;
+            greenValue = *gv;
             totalProgress->setValue(totalValue);
             greenProgress->setValue(greenValue);
         }
@@ -128,16 +135,15 @@ private Q_SLOTS:
             }
             QuestionView* question = ticket->getQuestionView();
             QuestionManager* manager2 = manager;
-            auto tv = std::make_shared<int>(totalValue);
-            auto gv = std::make_shared<int>(greenValue);
             connect(question, &QuestionView::nameUpdated, this, [ticket](const QString& name){ticket->setName(name);});
-            connect(question, &QuestionView::statusUpdated, this, [ticket, manager2, tv, gv, this](const QColor& color)
+            connect(question, &QuestionView::statusUpdated, this, [ticket, manager2, this](const QColor& color)
                     {
                     ticket->setColor(color, manager2, *tv, *gv);
                     totalValue = *tv;
                     greenValue = *gv;
-                    totalProgress->setValue(totalValue);
-                    greenProgress->setValue(greenValue);
+                    //qDebug() << totalValue << " " << greenValue;
+                    this->totalProgress->setValue(totalValue);
+                    this->greenProgress->setValue(greenValue);
                     }
                     );
             question->show();
@@ -156,16 +162,14 @@ private Q_SLOTS:
         }
         QuestionView* question = ticket->getQuestionView();
         QuestionManager* manager2 = manager;
-        auto tv = std::make_shared<int>(totalValue);
-        auto gv = std::make_shared<int>(greenValue);
         connect(question, &QuestionView::nameUpdated, this, [ticket](const QString& name){ticket->setName(name);});
-        connect(question, &QuestionView::statusUpdated, this, [ticket, manager2, tv, gv, this](const QColor& color)
+        connect(question, &QuestionView::statusUpdated, this, [ticket, manager2, this](const QColor& color)
                 {
                     ticket->setColor(color, manager2, *tv, *gv);
                     totalValue = *tv;
                     greenValue = *gv;
-                    totalProgress->setValue(totalValue);
-                    greenProgress->setValue(greenValue);
+                    this->totalProgress->setValue(totalValue);
+                    this->greenProgress->setValue(greenValue);
                 }
                 );
         question->show();
@@ -183,19 +187,29 @@ private Q_SLOTS:
         }
         QuestionView* question = ticket->getQuestionView();
         QuestionManager* manager2 = manager;
-        auto tv = std::make_shared<int>(totalValue);
-        auto gv = std::make_shared<int>(greenValue);
         connect(question, &QuestionView::nameUpdated, this, [ticket](const QString& name){ticket->setName(name);});
-        connect(question, &QuestionView::statusUpdated, this, [ticket, manager2, tv, gv, this](const QColor& color)
+        connect(question, &QuestionView::statusUpdated, this, [ticket, manager2, this](const QColor& color)
                 {
                     ticket->setColor(color, manager2, *tv, *gv);
                     totalValue = *tv;
                     greenValue = *gv;
-                    totalProgress->setValue(totalValue);
-                    greenProgress->setValue(greenValue);
+                    this->totalProgress->setValue(totalValue);
+                    this->greenProgress->setValue(greenValue);
                 }
                 );
         question->show();
+    }
+
+protected:
+    void closeEvent(QCloseEvent *event) override {
+        for (int i = 0; i < list->count(); ++i) {
+            if (auto ticket = dynamic_cast<Ticket*>(list->item(i))) {
+                if (auto qv = ticket->getQuestionView()) {
+                    qv->close();
+                }
+            }
+        }
+        event->accept();
     }
 
 private:
@@ -213,4 +227,6 @@ private:
     QProgressBar* greenProgress;
     int totalValue = 0;
     int greenValue = 0;
+    std::shared_ptr<int> tv = std::make_shared<int>(totalValue);
+    std::shared_ptr<int> gv = std::make_shared<int>(greenValue);
 };

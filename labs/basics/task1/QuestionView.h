@@ -41,6 +41,9 @@ QuestionView(QWidget* parent = nullptr) : QWidget(parent) {
 
         status = new QComboBox(groupBox);
         status->addItems({"Ещё не учил", "Учил, но хочу вернуться", "Выучил"});
+        status->setPlaceholderText("Выберите статус"); 
+        status->setCurrentIndex(-1);
+
         groupLayout->addWidget(status);
         connect(status, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &QuestionView::updateStatus);
 
@@ -78,7 +81,13 @@ private Q_SLOTS:
     }
 
     void updateStatus(int index) {
+        if (index == -1) {
+            return;
+        }
+        //qDebug() << index;
         Q_EMIT statusUpdated(priority[index]);
+        //qDebug() << "Selected:" << status->itemText(index);
+        status->setCurrentIndex(-1);
     }
 
 private:

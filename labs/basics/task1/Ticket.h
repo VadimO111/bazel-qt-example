@@ -7,7 +7,7 @@
 class Ticket : public QListWidgetItem {
 public:
     explicit Ticket(const QString& text, QListWidget* parent = nullptr)
-        : QListWidgetItem(text, parent), question(new QuestionView) {
+        : QListWidgetItem(text, parent), question(new QuestionView(dynamic_cast<QWidget*>(this))) {
         setBackground(grey);
         setForeground(black);
         QFont font("Areal", 14);
