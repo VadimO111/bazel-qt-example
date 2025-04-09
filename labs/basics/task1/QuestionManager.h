@@ -1,6 +1,8 @@
 #pragma once
 
-#include <bits/stdc++.h>
+#include <random>
+#include <deque>
+#include <chrono>
 #include <QDebug>
 
 inline std::mt19937 rnd(time(nullptr));
